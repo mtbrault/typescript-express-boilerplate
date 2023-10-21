@@ -1,7 +1,6 @@
 import express from 'express';
 import config from './config';
 import router from './router';
-import 'express-async-errors';
 
 const { HOST, PORT } = config;
 

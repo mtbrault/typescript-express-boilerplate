@@ -1,18 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import path from 'path';
-import createError from 'http-errors';
-import tsToJoi, { type Config } from 'typescript-schema-to-joi';
+import joi from 'joi';
+import { StatusCodes } from 'http-status-codes';
 
-export default (config: Omit<Config, 'tsconfig'>) => (req: Request, res: Response, next: NextFunction): void => {
-  const schema = tsToJoi({
-    ...config,
-    tsconfig: `${path.resolve(__dirname)}/tsconfig.json`,
-  });
+export default (schema: joi.AnySchema) => (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Response | void => {
   const { error } = schema.validate(req.body);
 
   if (error) {
-    throw createError.BadRequest(error.message);
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 
-  next();
+  return next();
 };
