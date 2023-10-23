@@ -8,4 +8,7 @@ export const createUser = async (email: string, password: string) => db<User>('u
   password,
 });
 
-export const getUserPassword = async (email: string) => db<User>('user').select('password').where('email', email).first();
+export const getUserPassword = async (email: string) => db<User>('user')
+  .select('uuid', 'password')
+  .where('email', email)
+  .first();

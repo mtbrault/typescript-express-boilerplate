@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 import { createUser, getUserPassword } from '../dao/user';
 import type { Login } from '../models/auth';
+import { generateToken } from '../services/auth';
 
 export const login = async (
   req: Request<{}, {}, Login>,
@@ -16,7 +17,12 @@ export const login = async (
     if (!compareSync(req.body.password, user.password)) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid password' });
     }
-    return res.status(StatusCodes.OK).json({ message: 'User logged in' });
+
+    const token = generateToken({
+      uuid: user.uuid,
+    });
+
+    return res.status(StatusCodes.OK).json({ token });
   } catch (e: any) {
     return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
