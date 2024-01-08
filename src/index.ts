@@ -1,19 +1,16 @@
-import express from 'express'
-import config from './config'
+import express from 'express';
+import config from './config';
+import router from './router';
 
-const { HOST, PORT, ENVIRONMENT } = config
+const { HOST, PORT } = config;
 
 const app = express()
-    .disable('x-powered-by')
-    .use(express.json())
-    .get('/toto', (_, res) => {
-        res.status(200).json({ message: 'Hello world!' })
-    })
+  .disable('x-powered-by')
+  .use(express.json())
+  .use('/api/v1', router);
 
-if (ENVIRONMENT !== 'test') {
-    app.listen(PORT, HOST, () => {
-        console.log(`Server is running on http://${HOST}:${PORT}`)
-    })
-}
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running on http://${HOST}:${PORT}`);
+});
 
-export default app
+export default app;
